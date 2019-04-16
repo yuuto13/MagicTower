@@ -1,0 +1,78 @@
+#ifndef ALGORITHM_H
+#define ALGORITHM_H
+
+#include <map>
+#include <set>
+#include <array>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+struct GridLocation {
+  int x, y;
+};
+
+struct SquareGrid {
+  static array<GridLocation, 4> DIRS;
+
+  int width, height;
+  set<GridLocation> walls;
+
+  SquareGrid(int width_, int height_)
+     : width(width_), height(height_) {}
+
+  bool in_bounds(GridLocation id) const {
+    return 0 <= id.x && id.x < width
+        && 0 <= id.y && id.y < height;
+  }
+
+  bool passable(GridLocation id) const {
+    return walls.find(id) == walls.end();
+  }
+
+  void add_wall(int x, int y) {
+    walls.insert(GridLocation{x, y});
+  }
+  
+  vector<GridLocation> neighbors(GridLocation id) const {
+    vector<GridLocation> results;
+
+    for (GridLocation dir : DIRS) {
+      GridLocation next{id.x + dir.x, id.y + dir.y};
+      if (in_bounds(next) && passable(next)) {
+        results.push_back(next);
+      }
+    }
+
+    if ((id.x + id.y) % 2 == 0) {
+      // aesthetic improvement on square grids
+      std::reverse(results.begin(), results.end());
+    }
+
+    return results;
+  }
+};
+
+template<typename T, typename priority_t>
+struct PriorityQueue {
+  typedef pair<priority_t, T> PQElement;
+  priority_queue<PQElement, vector<PQElement>,
+                 greater<PQElement>> elements;
+
+  inline bool empty() const {
+     return elements.empty();
+  }
+
+  inline void put(T item, priority_t priority) {
+    elements.emplace(priority, item);
+  }
+
+  T get() {
+    T best_item = elements.top().second;
+    elements.pop();
+    return best_item;
+  }
+};
+
+#endif // ALGORITHM_H

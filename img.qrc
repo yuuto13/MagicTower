@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resouses/pic/model.png</file>
+        <file>resouses/pic/frame.png</file>
+    </qresource>
+</RCC>
